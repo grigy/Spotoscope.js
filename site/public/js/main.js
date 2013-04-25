@@ -1,0 +1,1 @@
+../../../initializr/js/main.js

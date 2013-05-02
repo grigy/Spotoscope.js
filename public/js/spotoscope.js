@@ -3,15 +3,55 @@ $(function() {
   Parse.initialize("81nQtGIwTXAzDf6g4UfUsOZOzNd9DJ4ViDCwEw9Q", 
                    "uaGrVXt1LKQ2Meck9HmvIGKxczPjFAYf78vgLkrJ");
 
-  var Router = Backbone.Router.extend({
-    routes: {
-      '': 'home'
+  var Spot = Parse.Object.extend("Spots", {
+    defaults: {
+      name: ""
     }
   });
-  var router = Router();
-  router.on('route:home', function() {
-    console.log('Home page');
+
+  var Spots = Parse.Collection.extend({
+    model: Spot
   });
-  Backbone.history.start();
+
+  var SpotList = Parse.View.extend({
+    el: '.content',
+    render: function() {
+      var that = this;
+      var spots = new Spots;
+      spots.query = new Parse.Query(Spot);
+      spots.fetch({
+        success: function (spots) {
+           var template = _.template($('#spot-list-template').html(), {spots: spots.models});
+          that.$el.html(template);
+        }
+      })
+    }
+  });
+
+  var EditSpot = Parse.View.extend({
+    el: '.content',
+    render: function() {
+      this.$el.html('Show edit spot');
+    }
+  });
+
+  var spotList = new SpotList;
+  var editSpot = new EditSpot;
+
+  var Router = Parse.Router.extend({
+    routes: {
+      '': 'home',
+      'new': 'edit'
+    },
+    home: function() {
+      spotList.render();
+    },
+    edit: function() {
+      editSpot.render();
+    }
+  });
+  new Router;
+
+  Parse.history.start();
 
 });

@@ -50,11 +50,28 @@
       </table>
       </script>
 
+      <script type="text/template" id="edit-spot-template">
+        <form class="edit-spot-form">
+          <fieldset>
+            <legend>Create Spot</legend>
+            <label>Name</label>
+            <input type="text" id="name" name="name" />
+            <label>Description</label>
+            <input type="text" id="description" name="description" />
+            <label>Picture</label>
+            <input type="file" name="picture" />
+            <hr />
+            <button type="submit" class="btn">Create</button>
+          </fieldset>
+        </form>
+      </script>
+
       <!-- App UI -->
 
       <div id="spotoscope">
         <div class="title">
           <h1>Spotoscope</h1>
+          <hr />
         </div>
 
         <div class="content">

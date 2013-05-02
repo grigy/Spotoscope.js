@@ -5,7 +5,8 @@ $(function() {
 
   var Spot = Parse.Object.extend("Spots", {
     defaults: {
-      name: ""
+      name: '',
+      description: ''
     }
   });
 
@@ -21,7 +22,7 @@ $(function() {
       spots.query = new Parse.Query(Spot);
       spots.fetch({
         success: function (spots) {
-           var template = _.template($('#spot-list-template').html(), {spots: spots.models});
+          var template = _.template($('#spot-list-template').html(), {spots: spots.models});
           that.$el.html(template);
         }
       })
@@ -30,8 +31,21 @@ $(function() {
 
   var EditSpot = Parse.View.extend({
     el: '.content',
+    initialize: function() {
+      this.spots = new Spots;
+    },
     render: function() {
-      this.$el.html('Show edit spot');
+      var template = _.template($('#edit-spot-template').html(), {});
+      this.$el.html(template);
+    },
+    events: {
+      'submit .edit-spot-form': 'saveSpot'
+    },
+    saveSpot: function(ev) {
+      this.spots.create({
+        name: this.$('#name').val(),
+        description: this.$('#description').val()
+      });
     }
   });
 

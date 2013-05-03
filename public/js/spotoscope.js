@@ -22,7 +22,8 @@ $(function() {
       spots.query = new Parse.Query(Spot);
       spots.fetch({
         success: function (spots) {
-          var template = _.template($('#spot-list-template').html(), {spots: spots.models});
+          var template = _.template($('#spot-list-template').html(), 
+            {spots: spots.models});
           that.$el.html(template);
         }
       })
@@ -34,18 +35,51 @@ $(function() {
     initialize: function() {
       this.spots = new Spots;
     },
-    render: function() {
-      var template = _.template($('#edit-spot-template').html(), {});
-      this.$el.html(template);
+    render: function(options) {
+      if (options.id) {
+        var that = this;
+        that.spot = new Spot({id: options.id});
+        that.spot.fetch({
+          success: function(spot) {
+            var template = _.template($('#edit-spot-template').html(), {spot: spot});
+            that.$el.html(template);
+          }
+        })
+      } else {
+        var template = _.template($('#edit-spot-template').html(), {spot: null});
+        this.$el.html(template);
+      }
     },
     events: {
-      'submit .edit-spot-form': 'saveSpot'
+      'submit .edit-spot-form': 'saveSpot',
+      'click .delete': 'deleteSpot',
+      'click .cancel': 'cancel'
     },
     saveSpot: function(ev) {
-      this.spots.create({
-        name: this.$('#name').val(),
-        description: this.$('#description').val()
+      var spot = new Spot;
+      spot.set('name',        this.$('.name').val());
+      spot.set('description', this.$('.description').val());
+      spot.set('id', this.$('.id').val());
+      spot.save(null, {
+        success: function(spot) {
+          router.navigate('', {trigger: true});
+        },
+        error: function(spot) {
+          console.log('error creating new spot');
+        }
       });
+      return false;
+    },
+    deleteSpot: function(ev) {
+      this.spot.destroy({
+        success: function() {
+          router.navigate('', {trigger: true});
+        }
+      })
+      return false;
+    },
+    cancel: function(ev) {
+      router.navigate('', {trigger: true});
     }
   });
 
@@ -55,16 +89,21 @@ $(function() {
   var Router = Parse.Router.extend({
     routes: {
       '': 'home',
-      'new': 'edit'
+      'new': 'new',
+      'edit/:id': 'edit'
     },
     home: function() {
       spotList.render();
     },
-    edit: function() {
-      editSpot.render();
+    new: function() {
+      editSpot.render({});
+    },
+    edit: function(id) {
+      editSpot.render({id: id});
     }
   });
-  new Router;
+
+  var router = new Router;
 
   Parse.history.start();
 

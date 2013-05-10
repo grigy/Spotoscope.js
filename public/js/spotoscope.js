@@ -55,13 +55,39 @@ $(function() {
       'click .delete': 'deleteSpot',
       'click .cancel': 'cancel'
     },
+    uploadImage: function(spot) {
+      var serverUrl = 'https://api.parse.com/1/files/' + window.file.name;
+      $.ajax({
+        type: "POST",
+        beforeSend: function(request) {
+          request.setRequestHeader("X-Parse-Application-Id", '81nQtGIwTXAzDf6g4UfUsOZOzNd9DJ4ViDCwEw9Q');
+          request.setRequestHeader("X-Parse-REST-API-Key", 'mMxyGIWKUcomhkccJ7w7V33W0JuuJxX9sFbuxOam');
+          request.setRequestHeader("Content-Type", file.type);
+        },
+        url: serverUrl,
+        data: window.file,
+        processData: false,
+        contentType: false,
+        success: function(data) {
+          //alert("File available at: " + data.url);
+          spot.set('imageUrl', data.url);
+          spot.save();
+        },
+        error: function(data) {
+          var obj = jQuery.parseJSON(data);
+          alert(obj.error);
+        }
+      });      
+    },    
     saveSpot: function(ev) {
+      var that = this;
       var spot = new Spot;
       spot.set('name',        this.$('.name').val());
       spot.set('description', this.$('.description').val());
       spot.set('id', this.$('.id').val());
       spot.save(null, {
         success: function(spot) {
+          that.uploadImage(spot);
           router.navigate('', {trigger: true});
         },
         error: function(spot) {

@@ -42,7 +42,7 @@
             <tr>
               <td><%= spot.get('name') %></td>
               <td><%= spot.get('description') %></td>
-              <td>pic</td>
+              <td><img src="<%= spot.get('imageUrl') %>" class="img-polaroid" width="30" height="30" /></td>
               <td><a href="#/edit/<%= spot.id %>" class="btn">Edit</a></td>
             </tr>
           <% }); %>
@@ -60,7 +60,7 @@
             <input type="text" class="description" name="description" value="<%= spot ? spot.get('description'):''%>" />
             <label>Picture</label>
             <input type="file" name="picture" id="file-input" />
-            <div class="well" id="result"><p><span class="label label-warning">Notice</span> This demo works only in browsers with support for the <a href="https://developer.mozilla.org/en/DOM/window.URL">URL</a> or <a href="https://developer.mozilla.org/en/DOM/FileReader">FileReader</a> API.</p></div>
+            <div class="well" id="result"><img src="<%= spot ? spot.get('imageUrl'):''%>"/></div>
             <hr />
             <% if(spot) { %>
               <input type="hidden" class="id" value="<%= spot.id %>" />

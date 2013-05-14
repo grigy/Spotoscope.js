@@ -27,7 +27,16 @@ $(function() {
           that.$el.html(template);
         }
       })
-    }
+    },
+    events: {
+      'click .logout': 'logOut'
+    },
+    logOut: function(e) {
+      Parse.User.logOut();
+      new LogInView();
+      this.undelegateEvents();
+      delete this;
+    },
   });
 
   var EditSpot = Parse.View.extend({
@@ -109,6 +118,72 @@ $(function() {
     }
   });
 
+  var LogInView = Parse.View.extend({
+    events: {
+      "submit form.login-form": "logIn",
+      "submit form.signup-form": "signUp"
+    },
+
+    el: ".content",
+
+    initialize: function() {
+      _.bindAll(this, "logIn", "signUp");
+      this.render();
+    },
+
+    logIn: function(e) {
+      var self = this;
+      var username = this.$("#login-username").val();
+      var password = this.$("#login-password").val();
+
+      Parse.User.logIn(username, password, {
+        success: function(user) {
+          spotList.render()
+          self.undelegateEvents();
+          delete self;
+        },
+
+        error: function(user, error) {
+          self.$(".login-form .error").html("<button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>Invalid username or password. Please try again.").show();
+          this.$(".login-form button").removeAttr("disabled");
+        }
+      });
+
+      this.$(".login-form button").attr("disabled", "disabled");
+
+      return false;
+    },
+
+    signUp: function(e) {
+      var self = this;
+      var username = this.$("#signup-username").val();
+      var password = this.$("#signup-password").val();
+
+      Parse.User.signUp(username, password, { ACL: new Parse.ACL() }, {
+        success: function(user) {
+          spotList.render()
+          self.undelegateEvents();
+          delete self;
+        },
+
+        error: function(user, error) {
+          self.$(".signup-form .error").html(error.message).show();
+          this.$(".signup-form button").removeAttr("disabled");
+        }
+      });
+
+      this.$(".signup-form button").attr("disabled", "disabled");
+
+      return false;
+    },
+
+    render: function() {
+      this.$el.html(_.template($("#login-template").html()));
+      this.delegateEvents();
+    }
+  });
+
+
   var spotList = new SpotList;
   var editSpot = new EditSpot;
 
@@ -119,7 +194,11 @@ $(function() {
       'edit/:id': 'edit'
     },
     home: function() {
-      spotList.render();
+      if (Parse.User.current()) {
+        spotList.render();
+      } else {
+        new LogInView();
+      }
     },
     new: function() {
       editSpot.render({});

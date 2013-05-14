@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title></title>
+        <title>Spotoscope</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width">
 
@@ -27,6 +27,7 @@
       <!-- Templates -->
       <script type="text/template" id="spot-list-template">
       <a href="#/new" class="btn btn-primary">Add Spot</a>
+      <div style="float:right"><a href="#" class="logout">Logout</a></div>
       <hr />
       <table class="table striped">
         <thead>
@@ -72,6 +73,31 @@
             <% } %>
           </fieldset>
         </form>
+      </script>
+
+      <script type="text/template" id="login-template">
+        <form class="login-form">
+          <fieldset>
+            <legend>Log In</legend>
+            <div class="error alert alert-error" style="display:none">
+              <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+            <input type="text" id="login-username" placeholder="Username" /><br>
+            <input type="password" id="login-password" placeholder="Password" /><br>
+            <button class="btn btn-primary">Log In</button>
+          </fieldset>
+        </form>
+        <form class="signup-form">
+          <fieldset>
+            <legend>Sign Up</legend>
+            <div class="error alert alert-error" style="display:none">
+              <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+            <input type="text" id="signup-username" placeholder="Username" /><br>
+            <input type="password" id="signup-password" placeholder="Create a Password" /><br>
+            <button class="btn">Sign Up</button>
+          </form>
+        </div>
       </script>
 
       <!-- App UI -->
